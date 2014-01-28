@@ -23,8 +23,8 @@ NeoBundle 'git://github.com/mattn/webapi-vim'
 
 filetype plugin on
 filetype indent on
+syntax on  
 " シンタックスハイライト
-syntax on
 " 行番号表示
 set number
 " 行頭の余白でTabを打つと'shiftwidth'の数だけインデントする 
@@ -42,7 +42,10 @@ set hlsearch
 
 set cursorline
 
-"ステータスライン
+
+"----------------------------
+" ステータスライン
+"----------------------------
 "--コマンド表示
 set showcmd
 "--常駐
@@ -57,9 +60,13 @@ set statusline+=[%{&fileformat}]
 set statusline+=[C=%c/%{col('$')-1}]
 "--現在行/全体行
 set statusline+=[L=%l/%L]
+"--文字と改行コード表示
+set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
 
 
-set clipboard=unnamed,autoselect 
+
+set clipboard+=unnamed 
+set clipboard=unnamed
 " マウス操作可能に 
 set mouse=a
 
