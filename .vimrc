@@ -20,6 +20,8 @@ NeoBundle 'git://github.com/scrooloose/syntastic.git'
 NeoBundle 'git://github.com/mattn/gist-vim.git'
 " WebApi(Gist連携用に導入)
 NeoBundle 'git://github.com/mattn/webapi-vim'
+" statusline装飾
+NeoBundle 'git://github.com/itchyny/lightline.vim'
 
 filetype plugin on
 filetype indent on
@@ -39,33 +41,25 @@ set ruler
 set nocompatible
 " 検索結果のハイライト表示
 set hlsearch
+" オートインデント
+set autoindent
 
 set cursorline
 
-
 "----------------------------
-" ステータスライン
+" ステータスライン(ほぼlightlineに移行)
 "----------------------------
 "--コマンド表示
 set showcmd
 "--常駐
 set laststatus=2
-"--ファイル名
-set statusline+=%<%F
-"--読み込み専用か
-set statusline+=%r
-"--ファイルフォーマット表示
-set statusline+=[%{&fileformat}]
-"--現在列/全体列
-set statusline+=[C=%c/%{col('$')-1}]
-"--現在行/全体行
-set statusline+=[L=%l/%L]
-"--文字と改行コード表示
-set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
 
+" lightlineの色変更即時反映
+if has('unix') && !has('gui_runnning')
+    inoremap<silent> <ESC> <ESC>
+    inoremap<silent> <C-[> <ESC>
+endif
 
-
-set clipboard+=unnamed 
 set clipboard=unnamed
 " マウス操作可能に 
 set mouse=a
