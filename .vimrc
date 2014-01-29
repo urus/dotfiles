@@ -22,6 +22,11 @@ NeoBundle 'git://github.com/mattn/gist-vim.git'
 NeoBundle 'git://github.com/mattn/webapi-vim'
 " statusline装飾
 NeoBundle 'git://github.com/itchyny/lightline.vim'
+" vimからコード実行
+NeoBundle 'git://github.com/thinca/vim-quickrun.git'
+" Markdownのプレビュー
+NeoBundle 'git://github.com/mattn/mkdpreview-vim.git'
+
 
 filetype plugin on
 filetype indent on
@@ -45,6 +50,8 @@ set hlsearch
 set autoindent
 
 set cursorline
+
+set scrolloff=5
 
 "----------------------------
 " ステータスライン(ほぼlightlineに移行)
