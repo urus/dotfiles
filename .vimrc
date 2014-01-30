@@ -1,6 +1,9 @@
-scriptencoding utf-8
+scriptencodin utf-8
 :colorscheme molokai
 
+"--------------------------------------------------------------------------------
+" plugins 
+"--------------------------------------------------------------------------------
 if has('vim_starting')
   filetype plugin off
   filetype indent off
@@ -24,42 +27,50 @@ NeoBundle 'git://github.com/mattn/webapi-vim'
 NeoBundle 'git://github.com/itchyny/lightline.vim'
 " vimからコード実行
 NeoBundle 'git://github.com/thinca/vim-quickrun.git'
-" Markdownのプレビュー
-NeoBundle 'git://github.com/mattn/mkdpreview-vim.git'
 
+"----------------------------
+" basic
+"---------------------------
 
 filetype plugin on
 filetype indent on
-syntax on  
-" シンタックスハイライト
-" 行番号表示
-set number
-" 行頭の余白でTabを打つと'shiftwidth'の数だけインデントする 
-set smarttab
-" タブの代わりに空白文字を挿入する
+syntax on  "シンタックスハイライト
+set number "行番号表示
+set smarttab "行頭の余白でTabを打つと'shiftwidth'の数だけインデントする 
+"タブの代わりに空白文字を挿入する
 set expandtab
 set tabstop=4
 set shiftwidth=4
-" 右下に表示される行・列番号の表示
-set ruler
-" compatibleオプションをオフにする
-set nocompatible
-" 検索結果のハイライト表示
-set hlsearch
-" オートインデント
-set autoindent
-
+set nocompatible "compatibleオプションをオフにする
+set hlsearch "検索結果のハイライト表示
+set autoindent "オートインデント
 set cursorline
+set autoread "書き換えられたら、自動で再読み込み
+set clipboard=unnamed
+set mouse=a "マウス操作可能に 
+set scrolloff=5 "5行余裕確保
+set textwidth=0
+set notitle "vimを使ってくれて,ありが(ry
+set vb t_vb= "ビープ消去
 
-set scrolloff=5
+"-------------------------------------------------------------------------------- 
+" vimrc再読み込み(自動)
+" --------------------------------------------------------------------------------
+augroup MyAutoCmd
+    autocmd!
+augroup END
+
+autocmd MyAutoCmd BufWritePost $MYVIMRC source $MYVIMRC | 
+
+" vimrc再読み込み(手動)
+command! Ev edit $MYVIMRC
+command! Rv source $MYVIMRC
 
 "----------------------------
-" ステータスライン(ほぼlightlineに移行)
+" status line
 "----------------------------
-"--コマンド表示
-set showcmd
-"--常駐
-set laststatus=2
+set showcmd "コマンド表示
+set laststatus=2 "常駐
 
 " lightlineの色変更即時反映
 if has('unix') && !has('gui_runnning')
@@ -67,13 +78,28 @@ if has('unix') && !has('gui_runnning')
     inoremap<silent> <C-[> <ESC>
 endif
 
-set clipboard=unnamed
-" マウス操作可能に 
-set mouse=a
-
+"----------------------------
+" key mapping 
+"----------------------------
 "インサートモード時、移動
 inoremap <c-d> <delete>
 inoremap <c-j> <down>
 inoremap <c-k> <up>
 inoremap <c-h> <left>
 inoremap <c-l> <right>
+
+
+"----------------------------
+" syntax check 
+"----------------------------
+"Ruby
+augroup rbsyntaxcheck
+    autocmd!
+    autocmd BufWrite *.rb w !ruby -c
+augroup END
+
+"PHP
+augroup phpsyntaxcheck
+    autocmd!
+    autocmd BufWrite *.php w !php -l
+augroup END
