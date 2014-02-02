@@ -1,5 +1,8 @@
 scriptencodin utf-8
 :colorscheme molokai
+let g:molokai_original = 1
+" let g:rehash256 = 1
+" set background=dark
 "--------------------------------------------------------------------------------
 " plugins 
 "--------------------------------------------------------------------------------
@@ -50,12 +53,18 @@ set hlsearch "検索結果のハイライト表示
 set autoindent "オートインデント
 set cursorline
 set autoread "書き換えられたら、自動で再読み込み
+set nobackup "バックアップを作らない
+set writebackup "保存時のみバックアップを作成
+set backupext=.bk "バックアップファイルの拡張子
 set clipboard=unnamed
+set history=100 "コマンド履歴数
 set mouse=a "マウス操作可能に 
 set scrolloff=5 "5行余裕確保
 set textwidth=0
 set notitle "vimを使ってくれて,ありが(ry
 set vb t_vb= "ビープ消去
+set ttyfast
+set lazyredraw
 "-------------------------------------------------------------------------------- 
 " vimrc reload
 " --------------------------------------------------------------------------------
