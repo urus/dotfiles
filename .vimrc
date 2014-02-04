@@ -164,6 +164,20 @@ let howm_fileformat   ='unix'
 "--------------------------------------------------------------------------------
 "最後の編集位置にカーソルを自動的に移動
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" \wでカーソル行のURLをブラウザで開く
+function! HandleURI()
+  let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;:]*')
+  echo s:uri
+  if s:uri != ""
+    exec "!open \"" . s:uri . "\""
+  else
+    echo "No URI found in line."
+  endif
+endfunction
+
+map <Leader>w :call HandleURI()<CR>
+
 "戦闘力計測
 function! Scouter(file, ...)
   let pat = '^\s*$\|^\s*"'
