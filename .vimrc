@@ -1,5 +1,4 @@
 scriptencodin utf-8
-set t_Co=256
 :colorscheme molokai
 let g:molokai_original = 1
 let g:rehash256 = 1
@@ -39,6 +38,8 @@ NeoBundle 'SQLUtilities'
 NeoBundle 'Shougo/unite.vim'
 " スクロールをスムーズに
 NeoBundle 'yuroyoro/smooth_scroll.vim'
+
+NeoBundle 'fuenor/qfixhowm.git'
 "--------------------------------------------------------------------------------
 " basic
 "--------------------------------------------------------------------------------
@@ -137,11 +138,11 @@ augroup END
 let g:unite_enable_start_insert = 1 " uniteバッファを常にインサートモードで起動
 let g:unite_cursor_line_highlight = 'CursorLine'
 let g:unite_abbr_highlight = 'StatusLine'
-
+" キーマップ変更
 nnoremap [unite] <Nop>
 nmap f [unite]
 nnoremap <silent> [unite]a :<C-u>Unite -buffer-name=files buffer_tab file_rec file file_mru<CR>
-nnoremap <silent> [unite]u  :<C-u>Unite -no-split<Space>
+nnoremap <silent> [unite]u :<C-u>Unite -no-split<Space>
 nnoremap <silent> [unite]f :<C-u>Unite -no-split -buffer-name=files file<CR>
 nnoremap <silent> [unite]m :<C-u>Unite -no-split buffer file_mru<CR>
 
@@ -152,12 +153,18 @@ function! s:unite_my_settings()
   " ESCキーを2回押すと終了
   nmap <buffer> <ESC>  <Plug>(unite_exit)
 endfunction
+
+" QFixHowm
+let QFixHowm_Key      ='g'
+let howm_dir          ='~/Dropbox/doc'
+let howm_fileencoding ='utf-8'
+let howm_fileformat   ='unix'
 "--------------------------------------------------------------------------------
 " misc
 "--------------------------------------------------------------------------------
 "最後の編集位置にカーソルを自動的に移動
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-"Scouter
+"戦闘力計測
 function! Scouter(file, ...)
   let pat = '^\s*$\|^\s*"'
   let lines = readfile(a:file)
