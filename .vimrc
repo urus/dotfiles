@@ -24,6 +24,10 @@ NeoBundle 'git://github.com/scrooloose/syntastic.git'
 NeoBundle 'git://github.com/mattn/gist-vim.git'
 " WebApi(Gist連携用に導入)
 NeoBundle 'git://github.com/mattn/webapi-vim'
+" ファイル操作
+NeoBundle 'Shougo/vimproc'
+
+NeoBundle 'Shougo/vimfiler'
 " statusline装飾
 NeoBundle 'git://github.com/itchyny/lightline.vim'
 " vimからコード実行
@@ -44,6 +48,7 @@ NeoBundle 'fuenor/qfixhowm.git'
 NeoBundle 'Shougo/neocomplcache.vim'
 
 NeoBundle 'myhere/vim-nodejs-complete'
+
 "--------------------------------------------------------------------------------
 " basic
 "--------------------------------------------------------------------------------
@@ -89,7 +94,7 @@ command! Rv source $MYVIMRC
 "--------------------------------------------------------------------------------
 " status line
 "--------------------------------------------------------------------------------
-set showcmd "コマンド表示
+"set showcmd "コマンド表示
 set laststatus=2 "常駐
 " lightlineの色変更即時反映
 if has('unix') && !has('gui_runnning')
@@ -132,6 +137,7 @@ augroup END
 "--------------------------------------------------------------------------------
 " plugins setting
 "--------------------------------------------------------------------------------
+
 "  imap <silent><buffer> <ESC><ESC> <ESC>
 " YankRing
 :nnoremap <silent> <F7> :YRShow<CR>  
@@ -195,6 +201,72 @@ inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
+
+" lightline
+
+let g:lightline = {
+        \ 'colorscheme': 'landscape',
+        \ 'mode_map': {'c': 'NORMAL'},
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+        \ },
+        \ 'component_function': {
+        \   'modified': 'MyModified',
+        \   'readonly': 'MyReadonly',
+        \   'fugitive': 'MyFugitive',
+        \   'filename': 'MyFilename',
+        \   'fileformat': 'MyFileformat',
+        \   'filetype': 'MyFiletype',
+        \   'fileencoding': 'MyFileencoding',
+        \   'mode': 'MyMode'
+        \ }
+        \ }
+
+function! MyModified()
+  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! MyReadonly()
+  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+endfunction
+
+function! MyFilename()
+  return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'unite' ? unite#get_status_string() :
+        \  &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != MyModified() ? ' ' . MyModified() : '')
+endfunction
+
+function! MyFugitive()
+  try
+    if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+      return fugitive#head()
+    endif
+  catch
+  endtry
+  return ''
+endfunction
+
+function! MyFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! MyFiletype()
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+endfunction
+
+function! MyFileencoding()
+  return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+endfunction
+
+function! MyMode()
+  return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+" VimFiler
+:let g:vimfiler_as_default_explorer = 1
 
 "--------------------------------------------------------------------------------
 " misc
