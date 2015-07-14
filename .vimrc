@@ -10,7 +10,7 @@ if has('vim_starting')
   filetype indent off
   execute 'set runtimepath+=' . expand('~/.vim/bundle/neobundle.vim')
 endif
-call neobundle#rc(expand('~/.vim/bundle'))
+call neobundle#begin(expand('~/.vim/bundle'))
 " 各種プラグイン
 " 再帰的にファイルを列挙し、絞り込んで開く
 NeoBundle 'git://github.com/kien/ctrlp.vim.git'
@@ -48,6 +48,8 @@ NeoBundle 'fuenor/qfixhowm.git'
 NeoBundle 'Shougo/neocomplcache.vim'
 
 NeoBundle 'myhere/vim-nodejs-complete'
+
+call neobundle#end()
 
 "--------------------------------------------------------------------------------
 " basic
