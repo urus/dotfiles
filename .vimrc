@@ -13,7 +13,7 @@ endif
 call neobundle#begin(expand('~/.vim/bundle'))
 " 各種プラグイン
 " 再帰的にファイルを列挙し、絞り込んで開く
-NeoBundle 'git://github.com/kien/ctrlp.vim.git'
+" NeoBundle 'git://github.com/kien/ctrlp.vim.git'
 " パッケージマネージャー
 NeoBundle 'git://github.com/Shougo/neobundle.vim.git'
 " ファイルエクスプローラ
@@ -40,15 +40,26 @@ NeoBundle 'Align'
 NeoBundle 'SQLUtilities'
 " 候補群を絞り込んでアクション
 NeoBundle 'Shougo/unite.vim'
+
+NeoBundle 'git://github.com/Shougo/neomru.vim'
+
+NeoBundle 'rking/ag.vim'
 " スクロールをスムーズに
 NeoBundle 'yuroyoro/smooth_scroll.vim'
-" vimでメモ
-NeoBundle 'fuenor/qfixhowm.git'
 
-NeoBundle 'Shougo/neocomplcache.vim'
+" NeoBundle 'Shougo/neocomplcache.vim'
 
 NeoBundle 'myhere/vim-nodejs-complete'
 
+NeoBundleLazy "davidhalter/jedi-vim", {
+      \ "autoload": {
+      \   "filetypes": ["python", "python3", "djangohtml"],
+      \ },
+      \ "build": {
+      \   "mac": "pip install jedi",
+      \   "unix": "pip install jedi",
+      \ }}
+let s:hooks = neobundle#get_hooks("jedi-vim")
 call neobundle#end()
 
 "--------------------------------------------------------------------------------
@@ -123,6 +134,14 @@ map <F2> <ESC>;bp<CR>
 map <F3> <ESC>;bn<CR>
 " 検索ハイライト無効
 nmap <Esc><Esc> :nohlsearch<CR>
+" F5キーでコマンド履歴、F6キーで検索履歴
+:nnoremap <F5> <Esc>q:
+:nnoremap <F6> <Esc>q/
+" 無効化
+:nnoremap q: <Nop>
+:nnoremap q/ <Nop>
+:nnoremap q? <Nop>
+
 "--------------------------------------------------------------------------------
 " syntax check 
 "--------------------------------------------------------------------------------
@@ -136,6 +155,8 @@ augroup phpsyntaxcheck
     autocmd!
     autocmd BufWrite *.php w !php -l
 augroup END
+
+let g:syntastic_python_checkers = ['pep8', 'pyflakes']
 "--------------------------------------------------------------------------------
 " plugins setting
 "--------------------------------------------------------------------------------
@@ -146,17 +167,31 @@ augroup END
 :let g:yankring_max_history = 10    "記録する履歴の件数を10件に制限
 :let g:yankring_window_height = 13  "履歴全件合わせてウィンドウの高さ調節
 
-" unite
-let g:unite_enable_start_insert = 1 " uniteバッファを常にインサートモードで起動
+" Unite
+" 大文字小文字を区別しない
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+" unite grep に ag(The Silver Searcher) を使う
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_recursive_opt = ''
+ endif
+
+" let g:unite_enable_start_insert = 1 " uniteバッファを常にインサートモードで起動
 let g:unite_cursor_line_highlight = 'CursorLine'
 let g:unite_abbr_highlight = 'StatusLine'
-" キーマップ変更
 nnoremap [unite] <Nop>
 nmap f [unite]
 nnoremap <silent> [unite]a :<C-u>Unite -buffer-name=files buffer_tab file_rec file file_mru<CR>
 nnoremap <silent> [unite]u :<C-u>Unite -no-split<Space>
 nnoremap <silent> [unite]f :<C-u>Unite -no-split -buffer-name=files file<CR>
 nnoremap <silent> [unite]m :<C-u>Unite -no-split buffer file_mru<CR>
+nnoremap <silent> [unite]g :<C-u>Unite grep:. -buffer-name=search-buffer<CR><C-R><C-W><CR>
+nnoremap <silent> [unite]r  :<C-u>UniteResume search-buffer<CR>
+" ファイルを開く時、ウィンドウを縦に分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+au FileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()
@@ -166,43 +201,26 @@ function! s:unite_my_settings()
   nmap <buffer> <ESC>  <Plug>(unite_exit)
 endfunction
 
-" QFixHowm
-let QFixHowm_Key      ='g'
-let howm_dir          ='~/Dropbox/doc'
-let howm_fileencoding ='utf-8'
-let howm_fileformat   ='unix'
-
 "neocomplcache
 " Use neocomplcache.
-let g:neocomplcache_enable_at_startup = 1
+" let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
-let g:neocomplcache_enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-
-" Define dictionary.
-let g:neocomplcache_dictionary_filetype_lists = {
-    \ 'default' : ''
-    \ }
+"let g:neocomplcache_enable_smart_case = 1
+"" Set minimum syntax keyword length.
+"let g:neocomplcache_min_syntax_length = 3
+"let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+"
+"" Define dictionary
+"let g:neocomplcache_dictionary_filetype_lists = {
+"    \ 'default' : ''
+"    \ }
 
 " Plugin key-mappings.
-inoremap <expr><C-g>     neocomplcache#undo_completion()
-inoremap <expr><C-l>     neocomplcache#complete_common_string()
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplcache#smart_close_popup() . "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+" inoremap <expr><C-g>     neocomplcache#undo_completion()
+" inoremap <expr><C-l>     neocomplcache#complete_common_string()
+" 
+" " <TAB>: completion.
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " lightline
 
@@ -269,6 +287,9 @@ endfunction
 
 " VimFiler
 :let g:vimfiler_as_default_explorer = 1
+
+" NERDTree
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
 
 "--------------------------------------------------------------------------------
 " misc
